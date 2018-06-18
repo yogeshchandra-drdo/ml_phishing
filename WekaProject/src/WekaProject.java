@@ -81,7 +81,7 @@ public class WekaProject {
             // for each training-testing split pair, train and test the classifier
             
            for(int j = 0 ; j < trainingSplits.length ; j++){
-               Evaluation validation = classify(models[j], trainingSplits[i],testingSplits[i]);
+               Evaluation validation = classify(models[i], trainingSplits[j],testingSplits[j]);
            
                 predictions.appendElements(validation.predictions());
                 
