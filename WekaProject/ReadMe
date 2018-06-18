@@ -1,0 +1,12 @@
+The Src folder contains the WekaProject java file. There is a screenshot with the name "ResultOutputScreenShot.png".
+
+The classifiers used are :- 
+   a) J48
+   b)PART
+   c)DecisionTable
+   d)DecisionStump
+   
+   
+   The dataset used was Mohammed's Phishing DataSet.
+   
+   Project has been performed on NetBeans IDE.
