@@ -1,0 +1,5 @@
+It is under procecss.
+
+Tried to implement filtering and spliting the dataset into training and test. Filter used was remove. But the time taken is coming out to be 
+very large. I had to abort the running in between.
+
