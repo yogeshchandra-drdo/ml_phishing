@@ -58,7 +58,7 @@ public class WekaProject {
         
         
         // Seperate the split into training and testing arrays
-        Instances[] trainingSplits = split[0];rain
+        Instances[] trainingSplits = split[0];
         Instances[] testingSplits = split[1];
         
         // Use a set of classifiers 

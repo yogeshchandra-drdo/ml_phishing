@@ -28,6 +28,12 @@ import javafx.geometry.*;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.evaluation.NominalPrediction;
+import weka.classifiers.trees.DecisionStump;
+import weka.classifiers.trees.J48;
+import weka.classifiers.trees.LMT;
+import weka.classifiers.trees.REPTree;
+import weka.classifiers.trees.RandomForest;
 import weka.core.FastVector;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
@@ -68,7 +74,6 @@ public class ClassifierGUI {
         
         // Splitting the data into training and testing dataset
         Instances[][] split = crossValidationSplit(data,10);
-        
         //traingarray Split
         Instances[] training = split[0];
         // testing array split
@@ -82,18 +87,25 @@ public class ClassifierGUI {
         naivebayesClassifier.setMaxWidth(300);
         naivebayesClassifier.setOnAction(e -> {
             // Add code for Naives bayes Classifier
+           Evaluation eval = null;
+           Classifier cls = new NaiveBayes();
            
             for(int j = 0 ; j < training.length ; j++){
                 try {
-                    Evaluation validation = classify(new NaiveBayes(), training[j],testing[j]);
-                    predictions.appendElements(validation.predictions());
-                    resultWindow.result(validation,predictions);
-                    window.wait(6000);
-                    window.close();
-                    
+                    eval = classify(cls, training[j],testing[j]);
+                    predictions.appendElements(eval.predictions());
+                   
                 } catch (Exception ex) {
                     Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
                 }}    
+             //   resultWindow.result(eval,predictions);
+             
+             double accuracy = calculateAccuracy(predictions);
+             
+              System.out.println("Accuracy of "+ cls.getClass().getSimpleName() + ": "
+                              + String.format("%.2f%%",accuracy) + "\n-----------------------"   );
+            
+
         });
         
         Trees = new ComboBox<>();
@@ -101,7 +113,21 @@ public class ClassifierGUI {
         Trees.getItems().addAll("Random Forest","J48", "RIPTree","LMT","Decision Stump");
         Trees.setMinWidth(300);
         Trees.setMaxWidth(300);
-        
+        Trees.setOnAction(e -> {
+            Evaluation eval = null;
+            Classifier cls[]={
+                new RandomForest(),
+                new J48(),
+                new REPTree(),
+                new LMT(),
+                new DecisionStump()
+            };
+            
+            
+            for(int j = 0; j < training.length;j++){
+                eval=classify(cls[])
+            }
+        });
         
         Functions = new ComboBox<>();
         Functions.setPromptText("Select a Function Classifier");
@@ -154,7 +180,22 @@ public class ClassifierGUI {
 
                 return validation;
 
-            }    
+            }
+       
+        public static double calculateAccuracy(FastVector predictions) {
+            double correct = 0;
+            
+            for(int i = 0 ; i < predictions.size() ; i++){
+                NominalPrediction np = (NominalPrediction) predictions.elementAt(i);
+                if(np.predicted() == np.actual()){
+                    correct++;
+                }
+            }
+            return 100* correct/ predictions.size();
+    }
+       
+  
+ 
     
     
     
