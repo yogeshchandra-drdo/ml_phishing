@@ -1,4 +1,4 @@
-/*
+/*%
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -22,8 +22,8 @@ import java.util.*;
         import java.io.BufferedReader;
         import java.io.FileNotFoundException;
         import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+        import java.util.logging.Level;
+        import java.util.logging.Logger;
 
 
         import weka.classifiers.meta.AdaBoostM1;
@@ -33,22 +33,22 @@ import java.util.logging.Logger;
         import weka.classifiers.Evaluation;
         import weka.classifiers.bayes.NaiveBayes;
         import weka.classifiers.evaluation.NominalPrediction;
-    import weka.classifiers.functions.Logistic;
+        import weka.classifiers.functions.Logistic;
         import weka.classifiers.functions.SMO;
-    import weka.classifiers.lazy.IBk;
-    import weka.classifiers.lazy.KStar;
+        import weka.classifiers.lazy.IBk;
+        import weka.classifiers.lazy.KStar;
         import weka.classifiers.rules.DecisionTable;
         import weka.classifiers.rules.OneR;
         import weka.classifiers.rules.PART;
         import weka.classifiers.trees.DecisionStump;
         import weka.classifiers.trees.J48;
         import weka.classifiers.meta.Stacking;
-    import weka.classifiers.rules.JRip;
-    import weka.classifiers.rules.ZeroR;
-    import weka.classifiers.trees.LMT;
-    import weka.classifiers.trees.REPTree;
-    import weka.classifiers.trees.RandomForest;
-    import weka.classifiers.trees.RandomTree;
+        import weka.classifiers.rules.JRip;
+        import weka.classifiers.rules.ZeroR;
+        import weka.classifiers.trees.LMT;
+        import weka.classifiers.trees.REPTree;
+        import weka.classifiers.trees.RandomForest;
+        import weka.classifiers.trees.RandomTree;
 
 
 
@@ -60,11 +60,11 @@ import java.util.logging.Logger;
         import weka.core.converters.ArffLoader;
         import weka.filters.supervised.instance.StratifiedRemoveFolds;
 
-import javafx.stage.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import javafx.scene.control.*;
-import javafx.geometry.*;
+        import javafx.stage.*;
+        import javafx.scene.*;
+        import javafx.scene.layout.*;
+        import javafx.scene.control.*;
+          import javafx.geometry.*;
 import javafx.scene.control.Label;
 
 import javafx.scene.control.Button;
@@ -124,16 +124,6 @@ public class Start extends Application {
             
     }
     
-      public static Evaluation classify(Classifier model, Instances trainingSet, Instances testingSet) throws Exception {
-
-                Evaluation validation = new Evaluation(trainingSet);
-
-                model.buildClassifier(trainingSet);
-                validation.evaluateModel(model, trainingSet);
-
-                return validation;
-
-            }    
     
  
 }

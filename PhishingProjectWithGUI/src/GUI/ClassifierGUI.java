@@ -29,6 +29,14 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.NominalPrediction;
+import weka.classifiers.functions.Logistic;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.lazy.IBk;
+import weka.classifiers.lazy.KStar;
+import weka.classifiers.rules.DecisionTable;
+import weka.classifiers.rules.JRip;
+import weka.classifiers.rules.OneR;
+import weka.classifiers.rules.PART;
 import weka.classifiers.trees.DecisionStump;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.LMT;
@@ -46,7 +54,7 @@ import weka.core.converters.ArffLoader;
  */
 public class ClassifierGUI {
    
-    public static FastVector predictions = new FastVector();
+  
    static Button naivebayesClassifier;
   static  ComboBox<String> Trees;
    static ComboBox<String> Functions;
@@ -74,6 +82,7 @@ public class ClassifierGUI {
         
         // Splitting the data into training and testing dataset
         Instances[][] split = crossValidationSplit(data,10);
+        
         //traingarray Split
         Instances[] training = split[0];
         // testing array split
@@ -87,60 +96,207 @@ public class ClassifierGUI {
         naivebayesClassifier.setMaxWidth(300);
         naivebayesClassifier.setOnAction(e -> {
             // Add code for Naives bayes Classifier
-           Evaluation eval = null;
-           Classifier cls = new NaiveBayes();
-           
+           FastVector predictionsN = new FastVector();
+           Evaluation validation = null;
             for(int j = 0 ; j < training.length ; j++){
                 try {
-                    eval = classify(cls, training[j],testing[j]);
-                    predictions.appendElements(eval.predictions());
+                     validation = classify(new NaiveBayes(), training[j],testing[j]);
+                  //  predictions.appendElements(validation.predictions());
+                    predictionsN.appendElements(validation.predictions());
+                    
                    
+                    
+                    
                 } catch (Exception ex) {
                     Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
                 }}    
-             //   resultWindow.result(eval,predictions);
-             
-             double accuracy = calculateAccuracy(predictions);
-             
-              System.out.println("Accuracy of "+ cls.getClass().getSimpleName() + ": "
-                              + String.format("%.2f%%",accuracy) + "\n-----------------------"   );
-            
-
+             double accuracy = calculateAccuracy(predictionsN);
+                    
+                    System.out.println("\n\nAccuracy Measure :" + accuracy);
+                    System.out.println("-----------------------------");
+                    
+           // resultWindow.result(validation,predictionsN);
+            //return;
         });
         
         Trees = new ComboBox<>();
         Trees.setPromptText("Select a Tree Classifier");
-        Trees.getItems().addAll("Random Forest","J48", "RIPTree","LMT","Decision Stump");
+        Trees.getItems().addAll("Random Forest","J48", "REPTree","LMT","Decision Stump");
         Trees.setMinWidth(300);
         Trees.setMaxWidth(300);
-        Trees.setOnAction(e -> {
-            Evaluation eval = null;
-            Classifier cls[]={
-                new RandomForest(),
-                new J48(),
-                new REPTree(),
-                new LMT(),
-                new DecisionStump()
-            };
-            
-            
-            for(int j = 0; j < training.length;j++){
-                eval=classify(cls[])
+        
+        // getValue() from comboBox
+        Trees.setOnAction(e-> {
+            FastVector predictionsN = new FastVector();
+           Evaluation validation = null;
+            String userSelected = Trees.getValue();
+            if (userSelected.compareTo("Random Forest") == 0){
+                for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new RandomForest(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+            }else if(userSelected.compareTo("J48")== 0){
+                for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new J48(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+            }else if(userSelected.compareTo("REPTree")== 0){
+                for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new REPTree(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+            }else if(userSelected.compareTo("LMT") == 0){
+                for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new LMT(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+            }else if(userSelected.compareTo("Decision Stump") == 0){
+                for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new DecisionStump(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                
             }
+            
+            double accuracy = calculateAccuracy(predictionsN);
+            System.out.println("\n\n Accuracy of " + userSelected + " : " + accuracy);
+            System.out.println("----------------------------------");
         });
+        
         
         Functions = new ComboBox<>();
         Functions.setPromptText("Select a Function Classifier");
         Functions.getItems().addAll("Logistic","SMO");
         Functions.setMinWidth(300);
         Functions.setMaxWidth(300);
-        
+        Functions.setOnAction(e -> {
+            String userSelected = Functions.getValue();
+            FastVector predictionsN = new FastVector();
+            Evaluation validation = null;
+            
+          switch(userSelected){
+              case "Logistic":
+                  for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new Logistic(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                  
+                  break;
+              case "SMO":    
+              for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new SMO(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                  
+                  break;
+          }
+          
+          double accuracy = calculateAccuracy(predictionsN);
+            System.out.println("\n\n Accuracy Measure of " + userSelected + ":" + accuracy);
+        });
         
         Rules = new ComboBox<>();
         Rules.setPromptText("Select a Rule Classifier");
-        Rules.getItems().addAll("JRip","Decision Table","OneR","PArT");
+        Rules.getItems().addAll("JRip","Decision Table","OneR","PART");
         Rules.setMinWidth(300);
         Rules.setMaxWidth(300);
+        Rules.setOnAction(e -> {
+            String userSelected = Rules.getValue();
+            FastVector predictionsN = new FastVector();
+            Evaluation validation = null;
+            
+            switch(userSelected){
+                case "JRip":
+                    for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new JRip(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                    break;
+                case "Decision Table":
+                    for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new DecisionTable(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                    
+                    break;
+                case "OneR":
+                    for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new OneR(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                    
+                    
+                    break;
+                case "PART":
+                    for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new PART(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                    
+                    break;
+                
+                }
+          
+            double accuracy = calculateAccuracy(predictionsN);
+            System.out.println("\n\n Accuracy measure of " + userSelected + " : " + accuracy);
+        });
+        
+        
         
         Lazy = new ComboBox<>();
         Lazy.setPromptText("Select a Lazy Classifier");
@@ -148,11 +304,54 @@ public class ClassifierGUI {
         Lazy.setMinWidth(300);
         Lazy.setMaxWidth(300);
         
+        Lazy.setOnAction(e-> {
+            String userSelected = Lazy.getValue();
+            FastVector predictionsN = new FastVector();
+            Evaluation validation = null;
+            
+            switch(userSelected){
+                
+                case "IBk(KNN)":
+                    for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new IBk(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                    
+                    break;
+                    
+                case "KStar":
+                    for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(new KStar(), training[j], testing[j]);
+                        predictionsN.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+                    
+                    break;
+                
+            }
+            
+            double accuracy = calculateAccuracy(predictionsN);
+            System.out.println("\n\n Accuracy Measure of "+ userSelected + " : "+ accuracy + "\n-----------------------");
+            
+        });
+        
+        
         
         UseMetaClassifier = new Button("Use a Meta Classifier");
         UseMetaClassifier.setMinWidth(300);
         UseMetaClassifier.setMaxWidth(300);
-        
+        UseMetaClassifier.setOnAction(e-> {
+            usignMetaClassifier.beginMetaClassifier();
+        });
         
         VBox layout = new VBox(25);
         layout.setPadding(new Insets(20, 20, 20, 20));
@@ -180,9 +379,9 @@ public class ClassifierGUI {
 
                 return validation;
 
-            }
-       
-        public static double calculateAccuracy(FastVector predictions) {
+            }    
+    
+       public static double calculateAccuracy(FastVector predictions) {
             double correct = 0;
             
             for(int i = 0 ; i < predictions.size() ; i++){
@@ -194,9 +393,7 @@ public class ClassifierGUI {
             return 100* correct/ predictions.size();
     }
        
-  
- 
-    
+       
     
     
 }

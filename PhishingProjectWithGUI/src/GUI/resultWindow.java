@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.NominalPrediction;
 import weka.core.FastVector;
 /**
  *
@@ -40,39 +41,40 @@ public class resultWindow {
      TextField fmeasure = new TextField();
      fmeasure.setText(validation.fMeasure(classIndex) + " ");
      // Accuracy Percentage
-    /* labelacc = new Label("Accuracy - Measure :");
+     labelacc = new Label("Accuracy - Measure :");
      TextField accPred = new TextField();
-     accPred.setText(validation.predictions() + " ");
-     
+     double accuracy = calculateAccuracy(predictions);
+     accPred.setText(accuracy + "\n ");
+    /* 
      // roc measure
      labelroc = new Label("ROC - Measure :");
      TextField rocmeasure = new TextField();
      rocmeasure.setText(validation.areaUnderROC(classIndex)+ " ");
- */
+ 
      // Creating Horizontal Box 1
      HBox hbox1 = new HBox();
      hbox1.setPadding(new Insets(10,10,10,10));
      hbox1.getChildren().addAll(labelf,fmeasure);
-     
+     */
      // horizontal Box2
-    /* 
+     
      HBox hbox2 = new HBox();
      hbox2.setPadding(new Insets(10,10,10,10));
      hbox2.getChildren().addAll(labelacc,accPred);
         
-     
+     /*
      
      // Horizontal Box3
      
      HBox hbox3 = new HBox();
      hbox3.setPadding(new Insets(10,10,10,10));
      hbox3.getChildren().addAll(labelroc,rocmeasure);
-     
      */
+     
      VBox layout = new VBox(40);
      layout.setPadding(new Insets(20,20,20,20));
       layout.setAlignment(Pos.CENTER);
-      layout.getChildren().addAll(hbox1);
+      layout.getChildren().addAll(hbox2);
       
       
       Scene scene = new Scene(layout,500,600);
@@ -81,5 +83,19 @@ public class resultWindow {
       
      
  }   
+ 
+        public static double calculateAccuracy(FastVector predictions) {
+            double correct = 0;
+            
+            for(int i = 0 ; i < predictions.size() ; i++){
+                NominalPrediction np = (NominalPrediction) predictions.elementAt(i);
+                if(np.predicted() == np.actual()){
+                    correct++;
+                }
+            }
+            return 100* correct/ predictions.size();
+    }
+
+ 
  
 }
