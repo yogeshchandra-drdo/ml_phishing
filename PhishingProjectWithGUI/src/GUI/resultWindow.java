@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 package GUI;
-
-
+/*
+!- Presently this file is not in use -!
+*/
 import static GUI.ClassifierGUI.classIndex;
 import javafx.application.Application;
 import javafx.geometry.Insets;

@@ -5,14 +5,21 @@
  */
 package GUI;
 import static GUI.ClassifierGUI.data;
+import static GUI.Start.crossValidationSplit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.lazy.IBk;
@@ -26,6 +33,8 @@ import weka.classifiers.trees.DecisionStump;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.LMT;
 import weka.classifiers.trees.REPTree;
+import weka.core.FastVector;
+import weka.core.Instances;
 
 /**
  *
@@ -41,8 +50,18 @@ public class usignMetaClassifier {
     
     
     public static void beginMetaClassifier(){
+        
         window = new Stage();
         window.setTitle("UsingMetaClassifier");
+        
+         data.setClassIndex(data.numAttributes() - 1);
+        // Splitting the data into training and testing dataset
+        Instances[][] split = crossValidationSplit(data,10);
+        
+        //traingarray Split
+        Instances[] training = split[0];
+        // testing array split
+        Instances[] testing = split[1];
         
         adaboost = new Button("AdaBoost");
         adaboost.setMinWidth(250);
@@ -51,7 +70,7 @@ public class usignMetaClassifier {
             
             // Add the code for AdaBoost Classifier
           String answer = MetaClassifierMenu.MenuWindowC();
-           
+            System.out.println("Please wait....while the system calculates.....");
               AdaBoostM1 m1 = new AdaBoostM1();
              switch(answer){
                  case "Naive Bayes":
@@ -91,9 +110,22 @@ public class usignMetaClassifier {
                  
              }
             m1.setNumIterations(20);
-            m1.buildClassifier(training);
+             FastVector predictions = new FastVector();
+           
+            Evaluation validation = null;
             
+             for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(m1, training[j], testing[j]);
+                        predictions.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
             
+        }
+             
+             double accuracy = calculateAccuracy(predictions);
+             System.out.println(accuracy + "\n----------------------\n");
         });
         
         bagging = new Button("Bagging");
@@ -103,6 +135,7 @@ public class usignMetaClassifier {
             // Add code for Bagging
             
             String selection = MetaClassifierMenu.MenuWindowC();
+            System.out.println("Please wait while the system calculates the result.....");
             Bagging bagger = new Bagging();
             
             switch(selection){
@@ -144,17 +177,93 @@ public class usignMetaClassifier {
             }
             
             bagger.setNumIterations(25);
-            bagger.buildClassifier(training);
+//            bagger.buildClassifier(training);
+             FastVector predictions = new FastVector();
+           
+            Evaluation validation = null;
+            
+             for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(bagger, training[j], testing[j]);
+                        predictions.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+            
+        }
+             
+             double accuracy = calculateAccuracy(predictions);
+             System.out.println(accuracy + "\n----------------------\n");
             
         });
         
         stacking = new Button("Stacking");
         stacking.setMinWidth(250);
         stacking.setMaxWidth(250);
-        stacking.setOnAction(e ->
+        stacking.setOnAction((ActionEvent e) ->
         {
+            Stacking stacker = new Stacking();
+            // First set the meta classifier (Base Classifier)
+            String base_classifier = MetaClassifierMenu.MenuWindowC();
+            switch(base_classifier){
+                case "Naive Bayes":
+                     stacker.setMetaClassifier(new NaiveBayes());
+                     break;
+                 
+                 case "Logistic":
+                     stacker.setMetaClassifier(new Logistic());
+                     break;
+                 case "SMO":
+                     stacker.setMetaClassifier(new SMO());
+                     break;
+                 case "IBk":
+                     stacker.setMetaClassifier(new IBk());
+                     break;
+                 case "Decision Table":
+                     stacker.setMetaClassifier(new DecisionTable());
+                     break;
+                 case "JRip":
+                     stacker.setMetaClassifier(new JRip());
+                     break;
+                 case "PART":
+                     stacker.setMetaClassifier(new PART());
+                     break;
+                 case "Decision Stump":
+                     stacker.setMetaClassifier(new DecisionStump());
+                     break;
+                 case "J48":
+                     stacker.setMetaClassifier(new J48());
+                     break;
+                 case "LMT":
+                     stacker.setMetaClassifier(new LMT());
+                     break;
+                 case "REPTree":
+                     stacker.setMetaClassifier(new REPTree());
+                     break;       
+   
+            }
+            //
+            Classifier[] selections = MetaClassifierMenu.MenuWindowStacking();
+            stacker.setClassifiers(selections);
+            System.out.println("Please wait while the system builds and evaluates the model....");
             
+//            
+            FastVector predictions = new FastVector();
+////           
+            Evaluation validation = null;
+//            
+             for(int j = 0 ; j < training.length ; j++){
+                    try {
+                        validation = classify(stacker, training[j], testing[j]);
+                        predictions.appendElements(validation.predictions());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
             
+             }
+             
+             double accuracy = calculateAccuracy(predictions);
+             System.out.println(accuracy + "\n-----------------------------\n");
             // Add code for Stacking
         });
         
@@ -168,6 +277,31 @@ public class usignMetaClassifier {
         
         window.setScene(scene);
         window.show();
+    }
+    
+    
+    
+    public static Evaluation classify(Classifier model, Instances trainingSet, Instances testingSet) throws Exception {
+
+                Evaluation validation = new Evaluation(trainingSet);
+
+                model.buildClassifier(trainingSet);
+                validation.evaluateModel(model, trainingSet);
+
+                return validation;
+
+            }    
+    
+     public static double calculateAccuracy(FastVector predictions) {
+            double correct = 0;
+            
+            for(int i = 0 ; i < predictions.size() ; i++){
+                NominalPrediction np = (NominalPrediction) predictions.elementAt(i);
+                if(np.predicted() == np.actual()){
+                    correct++;
+                }
+            }
+            return 100* correct/ predictions.size();
     }
     
         
