@@ -61,6 +61,9 @@ public class ClassifierGUI {
    static ComboBox<String> Rules;
    static ComboBox<String> Lazy;
    static Button UseMetaClassifier;
+   public static Instances data;
+   
+   
     public static int classIndex;
     
         public static void beginGUI() throws IOException,Exception{
@@ -75,7 +78,7 @@ public class ClassifierGUI {
             a = s.nextLine();
         ArffLoader arffloader = new ArffLoader();
         arffloader.setSource(new File(a));
-        Instances data = arffloader.getDataSet();
+        data = arffloader.getDataSet();
         data.setClassIndex(data.numAttributes() - 1);
         classIndex = data.numAttributes() -1;
         
