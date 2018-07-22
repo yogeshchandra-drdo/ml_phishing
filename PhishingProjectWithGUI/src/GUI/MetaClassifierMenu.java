@@ -114,78 +114,79 @@ public class MetaClassifierMenu{
         ArrayList<Integer> selecs = new ArrayList<>();
         if(box1.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
+            
         }else{
             i++;
         }
         if(box2.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box3.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box4.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box5.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box6.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box7.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box8.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box9.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box10.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }
         if(box11.isSelected()){
             numberOfSelected++;
-            i++;
             selecs.add(i);
+            i++;
         }else{
             i++;
         }

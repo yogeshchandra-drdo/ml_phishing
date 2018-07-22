@@ -4,11 +4,13 @@
  * and open the template in the editor.
  */
 package GUI;
+import static GUI.ClassifierGUI.calculateAccuracy;
 import static GUI.ClassifierGUI.data;
 import static GUI.Start.crossValidationSplit;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,7 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.functions.Logistic;
@@ -123,9 +125,16 @@ public class usignMetaClassifier {
                     }
             
         }
-             
-             double accuracy = calculateAccuracy(predictions);
-             System.out.println(accuracy + "\n----------------------\n");
+            PrintOutput.printResults(validation, predictions,"AdaBoost");
+            double accuracy = calculateAccuracy(predictions);
+            double roc = validation.areaUnderROC(0);
+            double fmeasure = validation.fMeasure(0);
+            try {
+                outputSaver.save("AdaBoostM1 " + " : " + "Classifier Applied ->" + answer, accuracy, fmeasure, roc, fmeasure);
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
         });
         
         bagging = new Button("Bagging");
@@ -191,10 +200,17 @@ public class usignMetaClassifier {
                     }
             
         }
+           
+            PrintOutput.printResults(validation, predictions,"Bagging");
+            double accuracy = calculateAccuracy(predictions);
+            double roc = validation.areaUnderROC(0);
+            double fmeasure = validation.fMeasure(0);
+            try {
+                outputSaver.save("Bagging " + " : " + "Classifier Applied ->" + selection, accuracy, fmeasure, roc, fmeasure);
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
              
-             double accuracy = calculateAccuracy(predictions);
-             System.out.println(accuracy + "\n----------------------\n");
-            
         });
         
         stacking = new Button("Stacking");
@@ -262,8 +278,15 @@ public class usignMetaClassifier {
             
              }
              
-             double accuracy = calculateAccuracy(predictions);
-             System.out.println(accuracy + "\n-----------------------------\n");
+            PrintOutput.printResults(validation, predictions,"Stacking");
+            double accuracy = calculateAccuracy(predictions);
+            double roc = validation.areaUnderROC(0);
+            double fmeasure = validation.fMeasure(0);
+            try {
+                outputSaver.save("Stacking " + " : " + "Meta Classifier Applied ->" + base_classifier + " ; Base Classifiers Applied : " + Arrays.toString(selections), accuracy, fmeasure, roc, fmeasure);
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
             // Add code for Stacking
         });
         

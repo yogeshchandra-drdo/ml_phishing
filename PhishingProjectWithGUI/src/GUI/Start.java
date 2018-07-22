@@ -70,6 +70,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
 public class Start extends Application {
@@ -84,13 +86,26 @@ public class Start extends Application {
     @Override
     public void start(Stage primaryStage){
         window = primaryStage;
-     
+        
+        TextField userInput = new TextField();
+        userInput.setMaxWidth(300);
+        Label label1 = new Label("Enter the file Location you want to work with :");
+        label1.setMinWidth(250);
+        HBox InputText = new HBox(label1,userInput);
+        InputText.setSpacing(25);
+        InputText.setPadding(new Insets(20,20,20,20));
+        InputText.setAlignment(Pos.CENTER);
+        
         startButton = new Button("Begin");
-        startButton.setOnAction(e-> {
-            try {
-                ClassifierGUI.beginGUI();
-            } catch (Exception ex) {
-                Logger.getLogger(Start.class.getName()).log(Level.SEVERE, null, ex);
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            public void handle(ActionEvent e) {
+                try {
+                    String filepath = userInput.getText();
+                    ClassifierGUI.beginGUI(filepath);
+                } catch (Exception ex) {
+                    Logger.getLogger(Start.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         
@@ -102,9 +117,9 @@ public class Start extends Application {
         
         VBox layout = new VBox(50);
         layout.setPadding(new Insets(20, 20, 20, 20));
-        layout.getChildren().addAll(startButton, exitButton);
+        layout.getChildren().addAll(InputText,startButton, exitButton);
         layout.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layout,500,400);
+        Scene scene = new Scene(layout,600,600);
         
         window.setScene(scene);
         window.setTitle("PhishingDataSet Analysis");

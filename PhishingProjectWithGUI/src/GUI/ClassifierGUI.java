@@ -14,6 +14,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -26,7 +27,8 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
+//import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.functions.Logistic;
@@ -66,7 +68,7 @@ public class ClassifierGUI {
    
     public static int classIndex;
     
-        public static void beginGUI() throws IOException,Exception{
+        public static void beginGUI(String filepath) throws IOException,Exception{
         Stage window = new Stage();
         window.setTitle("CLASSIFIER EXPLORER");
         
@@ -74,10 +76,10 @@ public class ClassifierGUI {
         // For now, Setting DataSet as Default to Mohammed Dataset
         Scanner s = new Scanner(System.in);
         String a = new String();
-            System.out.println("File Location: \n");
-            a = s.nextLine();
+        //System.out.println("File Location: \n");
+        //a = s.nextLine();
         ArffLoader arffloader = new ArffLoader();
-        arffloader.setSource(new File(a));
+        arffloader.setSource(new File(filepath));
         data = arffloader.getDataSet();
         data.setClassIndex(data.numAttributes() - 1);
         classIndex = data.numAttributes() -1;
@@ -97,7 +99,7 @@ public class ClassifierGUI {
         naivebayesClassifier = new Button("Apply Naive Bayes Classifier");
         naivebayesClassifier.setMinWidth(300);
         naivebayesClassifier.setMaxWidth(300);
-        naivebayesClassifier.setOnAction(e -> {
+        naivebayesClassifier.setOnAction((ActionEvent e) -> {
             // Add code for Naives bayes Classifier
            FastVector predictionsN = new FastVector();
            Evaluation validation = null;
@@ -112,14 +114,26 @@ public class ClassifierGUI {
                     
                 } catch (Exception ex) {
                     Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
-                }}    
-             double accuracy = calculateAccuracy(predictionsN);
-                    
-                    System.out.println("\n\nAccuracy Measure :" + accuracy);
-                    System.out.println("-----------------------------");
-                    
-           // resultWindow.result(validation,predictionsN);
-            //return;
+                }}
+            PrintOutput.printResults(validation, predictionsN, "Naive Bayes");
+                double accuracy = calculateAccuracy(predictionsN);
+                double roc = validation.areaUnderROC(0);
+                double fmeasure = validation.fMeasure(0);
+
+            try {
+                outputSaver.save("Naive Bayes", accuracy, fmeasure, roc, fmeasure);
+//            System.out.println("Do you want to save the output ? (y/n)");
+//            char ch = s.next().charAt(0);
+//            if(ch == 'y' || ch == 'Y'){
+//                saveOutput g = new saveOutput();
+//                g.openFile("Naive Bayes", accuracy, roc, fmeasure);
+//                g.addRecord("Naive Bayes", accuracy, roc, fmeasure);
+//                g.closeFile();
+//                saveOutput.openFile("Naive Bayes", accuracy,roc,fmeasure);
+//            }
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         
         Trees = new ComboBox<>();
@@ -186,9 +200,16 @@ public class ClassifierGUI {
                 
             }
             
+            PrintOutput.printResults(validation, predictionsN,userSelected);
             double accuracy = calculateAccuracy(predictionsN);
-            System.out.println("\n\n Accuracy of " + userSelected + " : " + accuracy);
-            System.out.println("----------------------------------");
+            double roc = validation.areaUnderROC(0);
+            double fmeasure = validation.fMeasure(0);
+            try {
+                outputSaver.save(userSelected, accuracy, fmeasure, roc, fmeasure);
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         });
         
         
@@ -229,8 +250,15 @@ public class ClassifierGUI {
                   break;
           }
           
-          double accuracy = calculateAccuracy(predictionsN);
-            System.out.println("\n\n Accuracy Measure of " + userSelected + ":" + accuracy);
+           PrintOutput.printResults(validation, predictionsN,userSelected);
+           double accuracy = calculateAccuracy(predictionsN);
+            double roc = validation.areaUnderROC(0);
+            double fmeasure = validation.fMeasure(0);
+            try {
+                outputSaver.save(userSelected, accuracy, fmeasure, roc, fmeasure);
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         
         Rules = new ComboBox<>();
@@ -295,8 +323,15 @@ public class ClassifierGUI {
                 
                 }
           
-            double accuracy = calculateAccuracy(predictionsN);
-            System.out.println("\n\n Accuracy measure of " + userSelected + " : " + accuracy);
+             PrintOutput.printResults(validation, predictionsN,userSelected);
+             double accuracy = calculateAccuracy(predictionsN);
+            double roc = validation.areaUnderROC(0);
+            double fmeasure = validation.fMeasure(0);
+            try {
+                outputSaver.save(userSelected, accuracy, fmeasure, roc, fmeasure);
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         
         
@@ -342,8 +377,15 @@ public class ClassifierGUI {
                 
             }
             
-            double accuracy = calculateAccuracy(predictionsN);
-            System.out.println("\n\n Accuracy Measure of "+ userSelected + " : "+ accuracy + "\n-----------------------");
+             PrintOutput.printResults(validation, predictionsN,userSelected);
+             double accuracy = calculateAccuracy(predictionsN);
+            double roc = validation.areaUnderROC(0);
+            double fmeasure = validation.fMeasure(0);
+            try {
+                outputSaver.save(userSelected, accuracy, fmeasure, roc, fmeasure);
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
         });
         
