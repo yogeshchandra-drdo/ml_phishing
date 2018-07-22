@@ -283,7 +283,8 @@ public class usignMetaClassifier {
             double roc = validation.areaUnderROC(0);
             double fmeasure = validation.fMeasure(0);
             try {
-                outputSaver.save("Stacking " + " : " + "Meta Classifier Applied ->" + base_classifier + " ; Base Classifiers Applied : " + Arrays.toString(selections), accuracy, fmeasure, roc, fmeasure);
+                outputSaver.save("Stacking " + " : " + "Meta Classifier Applied ->" + base_classifier + " ; Base Classifiers Applied : " + MetaClassifierMenu.selecsString, accuracy, fmeasure, roc, fmeasure);
+                MetaClassifierMenu.selecsString = "";
             } catch (IOException ex) {
                 Logger.getLogger(ClassifierGUI.class.getName()).log(Level.SEVERE, null, ex);
             }

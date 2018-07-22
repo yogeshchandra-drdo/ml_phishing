@@ -35,6 +35,7 @@ import weka.classifiers.trees.REPTree;
  */
 public class MetaClassifierMenu{
     
+    public static String selecsString = "";
     static String userSelected;
     static Classifier[] selections;
     static Button set;
@@ -115,6 +116,7 @@ public class MetaClassifierMenu{
         if(box1.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += "Naive Bayes -";
             i++;
             
         }else{
@@ -123,6 +125,7 @@ public class MetaClassifierMenu{
         if(box2.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " Logistic -";
             i++;
         }else{
             i++;
@@ -130,6 +133,7 @@ public class MetaClassifierMenu{
         if(box3.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " SMO -";
             i++;
         }else{
             i++;
@@ -137,6 +141,7 @@ public class MetaClassifierMenu{
         if(box4.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " IBk -";
             i++;
         }else{
             i++;
@@ -144,6 +149,7 @@ public class MetaClassifierMenu{
         if(box5.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " Decision Table -";
             i++;
         }else{
             i++;
@@ -151,6 +157,7 @@ public class MetaClassifierMenu{
         if(box6.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " JRip -";
             i++;
         }else{
             i++;
@@ -158,6 +165,7 @@ public class MetaClassifierMenu{
         if(box7.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " PART -";
             i++;
         }else{
             i++;
@@ -165,6 +173,7 @@ public class MetaClassifierMenu{
         if(box8.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " Decision Stump -";
             i++;
         }else{
             i++;
@@ -172,6 +181,7 @@ public class MetaClassifierMenu{
         if(box9.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " J48 -";
             i++;
         }else{
             i++;
@@ -179,6 +189,7 @@ public class MetaClassifierMenu{
         if(box10.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " LMT -";
             i++;
         }else{
             i++;
@@ -186,6 +197,7 @@ public class MetaClassifierMenu{
         if(box11.isSelected()){
             numberOfSelected++;
             selecs.add(i);
+            selecsString += " REPTree -";
             i++;
         }else{
             i++;
